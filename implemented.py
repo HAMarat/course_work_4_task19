@@ -17,4 +17,4 @@ genre_service = GenreService(dao=genre_dao)
 movie_service = MovieService(dao=movie_dao)
 
 user_dao = UserDao(session=db.session)
-user_service = UserService(dao=db.session)
+user_service = UserService(dao=user_dao)
