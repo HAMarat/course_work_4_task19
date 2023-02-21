@@ -2,6 +2,7 @@ import calendar
 import datetime
 
 import jwt
+import sqlalchemy
 from flask import request, abort
 from flask_restx import Resource, Namespace
 
@@ -13,21 +14,37 @@ from constants import secret, algo
 auth_ns = Namespace("auth")
 
 
-@auth_ns.route("/")
+@auth_ns.route("/register")
+class AuthViews(Resource):
+    def post(self):
+        auth_data = request.json
+        email_js = auth_data.get("email")
+        password_js = auth_data.get("password")
+
+        if None in [email_js, password_js]:
+            return f'Need enter email and password'
+
+        # Обработка исключения при попытке добавления записи с не уникальным primary key
+        try:
+            user_service.create(auth_data)
+        except sqlalchemy.exc.IntegrityError as error:
+            return f'{error}', 500
+
+
+@auth_ns.route("/login")
 class AuthViews(Resource):
     """
     Представление на основе класса AuthViews
     """
     def post(self):
         auth_data = request.json
-        username_js = auth_data.get("username")
+        email_js = auth_data.get("email")
         password_js = auth_data.get("password")
-        role_js = auth_data.get("role")
 
-        if None in [username_js, password_js]:
+        if None in [email_js, password_js]:
             abort(400)
 
-        user = db.session.query(User).filter(User.username == username_js, User.role == role_js).first()
+        user = db.session.query(User).filter(User.email == email_js).first()
 
         if not user:
             abort(401)
@@ -38,8 +55,7 @@ class AuthViews(Resource):
             abort(401)
 
         data = {
-            "username": user.username,
-            "role": user.role
+            "email": user.email
         }
 
         min30 = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
@@ -58,7 +74,9 @@ class AuthViews(Resource):
 
     def put(self):
         auth_data = request.json
+        print(auth_data)
         refresh_token = auth_data.get('refresh_token')
+        print(refresh_token)
 
         if not refresh_token:
             abort(401)
@@ -68,9 +86,9 @@ class AuthViews(Resource):
         except Exception as e:
             return {e}
 
-        username_js = data.get('username')
+        email_js = data.get('email')
 
-        user = db.session.query(User).filter(User.username == username_js).first()
+        user = db.session.query(User).filter(User.email == email_js).first()
 
         if not user:
             abort(400)

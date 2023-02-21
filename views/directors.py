@@ -20,27 +20,27 @@ class DirectorsView(Resource):
         return res, 200
 
 
-@director_ns.route('/<int:rid>')
+@director_ns.route('/<int:did>')
 class DirectorView(Resource):
     """
     Представление на основе класса DirectorView
     """
     @auth_required
-    def get(self, rid):
-        r = director_service.get_one(rid)
+    def get(self, did):
+        r = director_service.get_one(did)
         sm_d = DirectorSchema().dump(r)
         return sm_d, 200
 
     @admin_required
-    def put(self, rid):
+    def put(self, did):
         director_data = request.json
         if not director_data.get("id"):
-            director_data["id"] = rid
+            director_data["id"] = did
         director_service.update(director_data)
         return "", 200
 
     @admin_required
-    def delete(self, rid):
-        director = director_service.get_one(rid)
+    def delete(self, did):
+        director = director_service.get_one(did)
         director_service.delete(director)
         return "", 204

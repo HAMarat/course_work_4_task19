@@ -1,5 +1,6 @@
 import jwt
 from flask import request, abort
+import json
 
 from constants import secret, algo
 
@@ -46,3 +47,8 @@ def admin_required(func):
             abort(403)
         return func(*args, **kwargs)
     return wrapper
+
+
+def read_json(filename: str, encoding: str = "utf-8") -> list | dict:
+    with open(filename, encoding=encoding) as f:
+        return json.load(f)

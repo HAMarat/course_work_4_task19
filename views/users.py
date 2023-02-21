@@ -22,14 +22,6 @@ class UsersViews(Resource):
         all_users_js = UserSchema(many=True).dump(all_users)
         return all_users_js, 200
 
-    def post(self):
-        user_data = request.json
-        # Обработка исключения при попытке добавления записи с не уникальным primary key
-        try:
-            user_service.create(user_data)
-        except sqlalchemy.exc.IntegrityError as error:
-            return f'{error}', 500
-
 
 @user_ns.route('/<int:uid>')
 class UserViews(Resource):
