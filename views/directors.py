@@ -3,7 +3,7 @@ from flask_restx import Resource, Namespace
 
 from dao.model.director import DirectorSchema
 from implemented import director_service
-from utils import auth_required, admin_required
+from utils import auth_required
 
 director_ns = Namespace('directors')
 
@@ -31,7 +31,7 @@ class DirectorView(Resource):
         sm_d = DirectorSchema().dump(r)
         return sm_d, 200
 
-    @admin_required
+    @auth_required
     def put(self, did):
         director_data = request.json
         if not director_data.get("id"):
@@ -39,7 +39,7 @@ class DirectorView(Resource):
         director_service.update(director_data)
         return "", 200
 
-    @admin_required
+    @auth_required
     def delete(self, did):
         director = director_service.get_one(did)
         director_service.delete(director)

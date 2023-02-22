@@ -9,8 +9,8 @@ class UserService:
     def __init__(self, dao: UserDao):
         self.dao = dao
 
-    def get_one(self, uid):
-        return self.dao.get_one(uid)
+    def get_by_email(self, email):
+        return self.dao.get_by_email(email)
 
     def get_all(self):
         return self.dao.get_all()
@@ -23,9 +23,6 @@ class UserService:
 
     def update(self, data):
         return self.dao.update(data)
-
-    def delete(self, uid):
-        self.dao.delete(uid)
 
     def get_hash(self, password):
         """
@@ -42,4 +39,5 @@ class UserService:
         """
         Функция для сравнения паролей в виде хеша
         """
-        return hmac.compare_digest(password_hash, self.get_hash(password))
+        print(password_hash, (self.get_hash(password)))
+        return hmac.compare_digest(password_hash, self.get_hash(password).decode())

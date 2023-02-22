@@ -5,8 +5,8 @@ class MovieDAO:
     def __init__(self, session):
         self.session = session
 
-    def get_one(self, bid):
-        return self.session.query(Movie).get(bid)
+    def get_one(self, mid):
+        return self.session.query(Movie).get(mid)
 
     def get_all(self):
         return self.session.query(Movie).all()
@@ -21,13 +21,13 @@ class MovieDAO:
         return self.session.query(Movie).filter(Movie.year == val).all()
 
     def create(self, movie_d):
-        ent = Movie(**movie_d)
-        self.session.add(ent)
+        movie = Movie(**movie_d)
+        self.session.add(movie)
         self.session.commit()
-        return ent
+        return movie
 
-    def delete(self, rid):
-        movie = self.get_one(rid)
+    def delete(self, mid):
+        movie = self.get_one(mid)
         self.session.delete(movie)
         self.session.commit()
 

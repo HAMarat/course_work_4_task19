@@ -1,6 +1,3 @@
-import calendar
-import datetime
-
 import jwt
 import sqlalchemy
 from flask import request, abort
@@ -9,6 +6,8 @@ from flask_restx import Resource, Namespace
 from dao.model.user import User
 from implemented import user_service
 from setup_db import db
+from utils import get_tokens
+
 from constants import secret, algo
 
 auth_ns = Namespace("auth")
@@ -58,25 +57,13 @@ class AuthViews(Resource):
             "email": user.email
         }
 
-        min30 = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
-        data['exp'] = calendar.timegm(min30.timetuple())
-        access_token = jwt.encode(data, secret, algo)
+        tokens = get_tokens(data)
 
-        days130 = datetime.datetime.utcnow() + datetime.timedelta(days=130)
-        data['wxp'] = calendar.timegm(days130.timetuple())
-        refresh_token = jwt.encode(data, secret, algo)
-
-        tokens = {
-            'access_token': access_token,
-            'refresh_token': refresh_token
-        }
         return tokens, 200
 
     def put(self):
         auth_data = request.json
-        print(auth_data)
         refresh_token = auth_data.get('refresh_token')
-        print(refresh_token)
 
         if not refresh_token:
             abort(401)
@@ -93,16 +80,6 @@ class AuthViews(Resource):
         if not user:
             abort(400)
 
-        min30 = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
-        data['exp'] = calendar.timegm(min30.timetuple())
-        access_token = jwt.encode(data, secret, algo)
+        tokens = get_tokens(data)
 
-        days130 = datetime.datetime.utcnow() + datetime.timedelta(days=130)
-        data['wxp'] = calendar.timegm(days130.timetuple())
-        refresh_token = jwt.encode(data, secret, algo)
-
-        tokens = {
-            'access_token': access_token,
-            'refresh_token': refresh_token
-        }
         return tokens, 200

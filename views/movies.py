@@ -3,7 +3,7 @@ from flask_restx import Resource, Namespace
 
 from dao.model.movie import MovieSchema
 from implemented import movie_service
-from utils import auth_required, admin_required
+from utils import auth_required
 from parser import page_parser
 
 movie_ns = Namespace('movies')
@@ -11,14 +11,14 @@ movie_ns = Namespace('movies')
 
 @movie_ns.route('/')
 class MoviesView(Resource):
-    # @auth_required
+    @auth_required
     def get(self):
         filters = page_parser.parse_args()
         all_movies = movie_service.get_all(filters)
         res = MovieSchema(many=True).dump(all_movies)
         return res, 200
 
-    @admin_required
+    @auth_required
     def post(self):
 
         req_json = request.json
@@ -34,7 +34,7 @@ class MovieView(Resource):
         sm_d = MovieSchema().dump(b)
         return sm_d, 200
 
-    @admin_required
+    @auth_required
     def put(self, bid):
         req_json = request.json
         if "id" not in req_json:
@@ -42,7 +42,7 @@ class MovieView(Resource):
         movie_service.update(req_json)
         return "", 204
 
-    @admin_required
+    @auth_required
     def delete(self, bid):
         movie_service.delete(bid)
         return "", 204
