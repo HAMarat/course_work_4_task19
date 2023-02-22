@@ -25,3 +25,9 @@ class UserDao:
         user.favorite_genre = user_data.get('favorite_genre')
         self.session.add(user)
         self.session.commit()
+
+    def update_password(self, user_data):
+        user = self.get_by_email(user_data.get('email'))
+        user.password = user_data.get('password')
+        self.session.add(user)
+        self.session.commit()

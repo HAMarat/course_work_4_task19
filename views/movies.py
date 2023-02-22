@@ -13,6 +13,10 @@ movie_ns = Namespace('movies')
 class MoviesView(Resource):
     @auth_required
     def get(self):
+        """
+        Метод для отображения всех фильмов с возможностью отображения
+        по страницам с выбором количества отображаемых фильмов на странице
+        """
         filters = page_parser.parse_args()
         all_movies = movie_service.get_all(filters)
         res = MovieSchema(many=True).dump(all_movies)
@@ -26,23 +30,23 @@ class MoviesView(Resource):
         return "", 201, {"location": f"/movies/{movie.id}"}
 
 
-@movie_ns.route('/<int:bid>')
+@movie_ns.route('/<int:mid>')
 class MovieView(Resource):
     @auth_required
-    def get(self, bid):
-        b = movie_service.get_one(bid)
-        sm_d = MovieSchema().dump(b)
+    def get(self, mid):
+        movie = movie_service.get_one(mid)
+        sm_d = MovieSchema().dump(movie)
         return sm_d, 200
 
     @auth_required
-    def put(self, bid):
+    def put(self, mid):
         req_json = request.json
         if "id" not in req_json:
-            req_json["id"] = bid
+            req_json["id"] = mid
         movie_service.update(req_json)
         return "", 204
 
     @auth_required
-    def delete(self, bid):
-        movie_service.delete(bid)
+    def delete(self, mid):
+        movie_service.delete(mid)
         return "", 204

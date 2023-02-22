@@ -8,8 +8,8 @@ class DirectorDAO:
     def get_one(self, bid):
         return self.session.query(Director).get(bid)
 
-    def get_all(self):
-        return self.session.query(Director).all()
+    def get_all(self, page):
+        return self.session.query(Director).paginate(page=page, per_page=12)
 
     def create(self, director_d):
         ent = Director(**director_d)

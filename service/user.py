@@ -21,8 +21,15 @@ class UserService:
             data['password'] = self.get_hash(data['password'])
         return self.dao.create(data)
 
-    def update(self, data):
-        return self.dao.update(data)
+    def update(self, user):
+        return self.dao.update(user)
+
+    def update_password(self, user, password):
+        """
+        Функция для обновления пароля пользователя
+        """
+        user['password'] = self.get_hash(password)
+        return self.dao.update_password(user)
 
     def get_hash(self, password):
         """
@@ -39,5 +46,5 @@ class UserService:
         """
         Функция для сравнения паролей в виде хеша
         """
-        print(password_hash, (self.get_hash(password)))
-        return hmac.compare_digest(password_hash, self.get_hash(password).decode())
+        print(password_hash, self.get_hash(password))
+        return hmac.compare_digest(password_hash, self.get_hash(password))

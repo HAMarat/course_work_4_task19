@@ -5,18 +5,19 @@ class MovieService:
     def __init__(self, dao: MovieDAO):
         self.dao = dao
 
-    def get_one(self, bid):
-        return self.dao.get_one(bid)
+    def get_one(self, mid):
+        return self.dao.get_one(mid)
 
     def get_all(self, filters):
         page = filters.get('page')
         status = filters.get('status')
+        per_page = filters.get('per_page')
 
         if status == 'new':
-            movies = self.dao.sort_by_filter()
+            movies = self.dao.sort_by_filter(page, per_page)
         else:
-            movies = self.dao.get_all()
-        return movies.paginate(page=page, per_page=12)
+            movies = self.dao.get_all(page, per_page)
+        return movies
 
     def create(self, movie_d):
         return self.dao.create(movie_d)
@@ -25,5 +26,5 @@ class MovieService:
         self.dao.update(movie_d)
         return self.dao
 
-    def delete(self, rid):
-        self.dao.delete(rid)
+    def delete(self, mid):
+        self.dao.delete(mid)

@@ -8,8 +8,12 @@ class MovieDAO:
     def get_one(self, mid):
         return self.session.query(Movie).get(mid)
 
-    def get_all(self):
-        return self.session.query(Movie).all()
+    def get_all(self, page, per_page):
+        return self.session.query(Movie).paginate(page=page, per_page=per_page)
+
+    def sort_by_filter(self, page, per_page):
+        movies = self.session.query(Movie).order_by(Movie.year.desc()).paginate(page=page, per_page=per_page)
+        return movies
 
     def get_by_director_id(self, val):
         return self.session.query(Movie).filter(Movie.director_id == val).all()
@@ -43,7 +47,3 @@ class MovieDAO:
 
         self.session.add(movie)
         self.session.commit()
-
-    def sort_by_filter(self):
-        movies = self.session.query(Movie).order_by(Movie.year.desc())
-        return movies

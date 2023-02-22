@@ -33,7 +33,7 @@ class AuthViews(Resource):
 @auth_ns.route("/login")
 class AuthViews(Resource):
     """
-    Представление на основе класса AuthViews
+    Представление на основе класса AuthViews для получения токенов
     """
     def post(self):
         auth_data = request.json
@@ -62,6 +62,9 @@ class AuthViews(Resource):
         return tokens, 200
 
     def put(self):
+        """
+        Представление на основе класса AuthViews для обновления токенов на основание refresh_token
+        """
         auth_data = request.json
         refresh_token = auth_data.get('refresh_token')
 
